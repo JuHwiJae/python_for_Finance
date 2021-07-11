@@ -41,7 +41,7 @@ class simulation_class(object):
             self.pricing_date = mar_env.pricing_date
             self.initial_value = mar_env.get_constant('initial_value')
             self.volatility = mar_env.get_constant('volatility')
-            self.final_date = mar_env.get_constant('fianl_date')
+            self.final_date = mar_env.get_constant('final_date')
             self.currency = mar_env.get_constant('currency')
             self.frequency = mar_env.get_constant('frequency')
             self.paths = mar_env.get_constant('paths')
@@ -51,6 +51,13 @@ class simulation_class(object):
                 # mar_env 안에 time_grid가 있으면 이 값을 취함
                 # (포트폴리오 가치 평가용)
                 self.time_grid = mar_env.get_list('time_grid')
+            
+            except:
+                self.time_grid = None
+            
+            try:
+                # 만약 특별한 날짜가 있다면 추가
+                self.special_dates = mar_env.get_list('special_dates')
             
             except:
                 self.special_dates = []
@@ -93,14 +100,12 @@ class simulation_class(object):
             
         self.time_grid = np.array(time_grid)
     
-    def get_instrument_values(self, fixed_seed = True):
-        if self.instrument_value is None:
+    def get_instrument_values(self, fixed_seed=True):
+        if self.instrument_values is None:
             # 증권 가격이 없다면 시뮬레이션 시작
-            self.generate_paths(fixed_seed = fixed_seed, day_count = 365.)
-        
+            self.generate_paths(fixed_seed=fixed_seed, day_count=365.)
         elif fixed_seed is False:
             # fixed_seed가 False면 다시 시뮬레이션
-            self.generate_paths(fixed_seed = fixed_seed, day_count = 365.)
-        
+            self.generate_paths(fixed_seed=fixed_seed, day_count=365.)
         return self.instrument_values
 
